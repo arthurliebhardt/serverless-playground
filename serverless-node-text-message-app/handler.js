@@ -11,11 +11,11 @@ const request = require('request');
 const twilioClient = require('twilio')(twilioAccountSid, twilioAuthToken);
 
 // Required in responses for CORS support to work
-const headers = {'Access-Control-Allow-Origin': '*'};
+const headers = { 'Access-Control-Allow-Origin': '*' };
 
 
 module.exports.validateAndSend = (event, context, callback) => {
-  
+
   const validationData = {
     url: 'https://www.google.com/recaptcha/api/siteverify?secret=' +
       recaptchaSecret + "&response=" + event.body.captcha,
@@ -25,18 +25,18 @@ module.exports.validateAndSend = (event, context, callback) => {
   request(validationData, (error, response, body) => {
     const parsedBody = JSON.parse(body);
 
-    if(error || response.statusCode !== 200) {
+    if (error ||  response.statusCode !== 200) {
       const recaptchaErrResponse = {
         headers: headers,
         statusCode: 500,
         body: JSON.stringify({
           status: 'fail',
           message: 'Error attempting to validate recaptcha',
-          error: error || response.statusCode
+          error: error ||  response.statusCode
         }),
       };
       return callback(null, recaptchaErrResponse);
-    } else if(parsedBody.success === false) {
+    } else if (parsedBody.success === false) {
       const recaptchaFailedErrResponse = {
         headers: headers,
         statusCode: 200,
@@ -47,23 +47,43 @@ module.exports.validateAndSend = (event, context, callback) => {
       };
 
       return callback(null, recaptchaFailedErrResponse);
-    } else if(parsedBody.success === true) {
+    } else if (parsedBody.success === true) {
 
       // try to actually send the message
       const sms = {
         to: event.body.to,
-        body: event.body.message || '',
+        body: event.body.message ||  '',
         from: twilioPhoneNumber
       };
 
       twilioClient.messages.create(sms, (error, data) => {
-        
+        if (error) {
+          const twilioErrResponse = {
+            headers: headers,
+            statusCode: 200,
+            body: JSON.stringify({
+              status: 'fail',
+              message: error.message,
+              error: error
+            })
+          };
+
+          return callback(null, twilioErrResponse);
+        }
+        // If no erros: Return success response!
+        const successResponse = {
+          headers: headers,
+          statusCode: 200,
+          body: JSON.stringify({
+            status: 'success',
+            message: 'Text message successfully send',
+            body: data.body,
+            created: data.dateCreated
+          })
+        };
+
+        callback(null, successResponse);
       })
     }
-  });
-
-  callback(null, response);
-
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // callback(null, { message: 'Go Serverless v1.0! Your function executed successfully!', event });
+  })
 };
