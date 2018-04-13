@@ -1,15 +1,16 @@
 'use strict';
 
-const co         = require("co");
-const Promise    = require("bluebird");
-const fs         = Promise.promisifyAll(require("fs"));
+const co = require("co");
+const Promise = require("bluebird");
+const fs = Promise.promisifyAll(require("fs"));
 
 var html;
 
 function* loadHtml() {
-  if(!html) {
-    html = yield fs.readFile('static/index.html', 'utf-8');
+  if (!html) {
+    html = yield fs.readFileAsync('static/index.html', 'utf-8');
   }
+
   return html;
 }
 
