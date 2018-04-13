@@ -37,7 +37,7 @@ functions:
     environment:
       restaurants_table: restaurants
 
-  search-restaraunts:
+  search-restaurants:
     handler: functions/search-restaurants.handler
     events:
       - http:
