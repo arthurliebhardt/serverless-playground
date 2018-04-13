@@ -24,6 +24,8 @@ functions:
           method: get
     environment:
       restaraunts_api: https://i4j2rxx1rh.execute-api.us-east-1.amazonaws.com/dev/restaurants
+      cognito_user_pool_id: us-east-1_K1zCXjv21
+      cognito_client_id: 66fgmjgrsup2cvb2mjqi4ibjcn
   
   get-restaurants:
     handler: functions/get-restaurants.handler
@@ -42,7 +44,7 @@ functions:
           path: /restaurants/search
           method: post
           authorizer:
-            arn: arn:aws:cognito-idp:us-east-1:379118392019:userpool/us-east-1_K1zCXjv21
+            arn: arn:aws:cognito-idp:#{AWS::Region}:#{AWS::AccountId}:userpool/us-east-1_K1zCXjv21
     environment:
       restaurants_table: restaurants
 
