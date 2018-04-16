@@ -14,12 +14,9 @@ describe(`Given an authenticated user`, co.wrap(function* () {
     }));
 
     describe(`When we invoke the POST /restaurants/search endpoint with theme 'cartoon'`, co.wrap(function* () {
-        before(co.wrap(function* () {
-            yield init();
-        }));
 
         it(`Should return an array of 4 restaurants`, co.wrap(function* () {
-            let res = yield when.we_invoke_search_restaurants('cartoon');
+            let res = yield when.we_invoke_search_restaurants(user, 'cartoon');
 
             expect(res.statusCode).to.equal(200);
             expect(res.body).to.have.lengthOf(4);
