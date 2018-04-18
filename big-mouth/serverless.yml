@@ -3,6 +3,7 @@ service: big-mouth
 
 plugins:
   - serverless-pseudo-parameters
+  - serverless-alexa-skills
 provider:
   name: aws
   runtime: nodejs6.10

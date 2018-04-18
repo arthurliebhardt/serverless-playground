@@ -25,6 +25,8 @@
         "cheerio": "^1.0.0-rc.2",
         "lodash": "^4.17.5",
         "mocha": "^5.1.0",
+        "serverless": "^1.26.1",
+        "serverless-alexa-skills": "0.0.6",
         "serverless-pseudo-parameters": "^1.4.2"
     }
 }
